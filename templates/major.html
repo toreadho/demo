@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link href="../assets/style.css" rel="stylesheet">
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<body>
+<input type="text" id="code">
+<div id="myDiv"><h2>等待查询中</h2></div>
+<button type="button" onclick="loadXMLDoc()">查询</button>
+<table border="1" cellspacing="0">
+    <thead>
+      <tr>
+        <th>单件产品名称</th>
+        <th>原27位码</th>
+        <th>原码状态</th>
+        <th>型号</th>
+        <th>注册备案号</th>
+        <th>现27位码</th>
+        <th>现码状态</th>
+        <th>耗材企业</th>
+        <th>规格</th>
+      </tr>
+    </thead>
+    <tbody>
+</body>
+<script>
+function loadXMLDoc()
+{
+    var hcinfo = document.getElementById("code");
+	var xmlhttp;
+
+	if (window.XMLHttpRequest)
+	{
+		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		xmlhttp=new XMLHttpRequest();
+	}
+	else
+	{
+		// IE6, IE5 浏览器执行代码
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+            var res = JSON.parse(xmlhttp.responseText);
+            var datalist = [res];
+            var tbody = document.querySelector('tbody');
+            var str = '';
+            datalist.forEach(function (item) {
+             str += '<tr>';
+             for (var key in item) {
+               str += '<td>' + item[key] + '</td>';
+             }
+             str += '</tr>';
+            })
+            tbody.innerHTML = str;
+			document.getElementById("myDiv").innerHTML="查询完成";
+		}
+	}
+	var params = 'CLCode=' + hcinfo.value;
+	xmlhttp.open("POST","http://172.16.13.22:8800/lookup",true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xmlhttp.send(params);
+
+}
+</script>
+</html>

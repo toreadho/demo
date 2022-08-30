@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>18批耗材检索系统</title>
+  <!-- 引入 layui.css -->
+  <link rel="stylesheet" href="../static/layui/css/layui.css">
+  <script src="../static/jquery-3.6.0.min.js"></script>
+  <script src="../static/layui/layui.js"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+  <legend>耗材检索查询</legend>
+</fieldset>
+<div style="margin-top: 10px" align="center">
+    <label>耗材原编码:</label>
+    <input type="text" ID="code" lay-verify="required" placeholder="请输入报错耗材编码" autocomplete="off" style="width: 230px;">
+    <button type="button" class="layui-btn layui-btn-sm" ID="find">查找</button>
+</div>
+<div class="layui-progress" lay-filter="demo" style="margin-top: 10px;">
+  <div class="layui-progress-bar" lay-percent="0%"></div>
+</div>
+<div>
+<table id="infotable" lay-filter="test"></table>
+</div>
+<script>
+$(document).ready(function() {
+	$("#find").click(function(){
+	   var CLCode = document.getElementById("code").value;
+       var regCode = /[C]+[0-9]{26}/;
+       var tfres  = regCode.test(CLCode);
+	   if(regCode.test(CLCode)){
+	        $.ajax({
+	            url: "http://172.16.13.22:8800/lookup",
+                type: "post",
+                contentType: "application/json",
+                dataType:"json",
+                async:false,
+                data: JSON.stringify({"data":[{"CLCode":CLCode}]}),
+                success: function (result) {
+                  layui.use('table', function(){
+                  var table = layui.table;
+                  var datalist = result
+                  table.render({                    //表格实例
+                    elem: '#infotable'
+                    ,height: 850
+                    ,data:  datalist   //渲染的数据arr类型 [{},{}]
+                    ,page: true //开启分页
+                    ,cols: [[ //表头
+                    {field: '单件产品名称', title: '单件产品名称', width:300, sort: true, fixed: 'left'}
+                    ,{field: '原27位码', title: '原27位码', width:250}
+                    ,{field: '原码状态', title: '原码状态', width:110, sort: true}
+                    ,{field: '型号', title: '型号', width:250}
+                    ,{field: '注册备案号', title: '注册备案号', width: 177}
+                    ,{field: '27位码', title: '现27位码', width: 250, sort: true}
+                    ,{field: '类型', title: '现码状态', width: 110, sort: true}
+                    ,{field: '耗材企业', title: '耗材企业', width: 250}
+                    ,{field: '规格', title: '规格', width: 200, sort: true}
+                           ]]
+                    });
+                   });
+                },error: function (err) {
+                  alert("系统超时，请联系管理员");
+                }
+       })
+	   }else{
+	           alert("请输入正确的耗材编码");
+	     }
+    });
+});
+
+</script>
+</body>
+</html>

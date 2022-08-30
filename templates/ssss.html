@@ -1,0 +1,33 @@
+       $.ajax({
+	   url: "http://172.16.13.22:8800/lookup",
+                type: "post",
+                contentType: "application/json",
+                dataType:"json",
+                async:false,
+                data: JSON.stringify({"data":[{"CLCode":CLCode}]}),
+                success: function (result) {
+                  layui.use('table', function(){
+                  var table = layui.table;
+                  var datalist = result
+                  table.render({                    //表格实例
+                    elem: '#infotable'
+                    ,height: 850
+                    ,data:  datalist   //渲染的数据arr类型 [{},{}]
+                    ,page: true //开启分页
+                    ,cols: [[ //表头
+                    {field: '单件产品名称', title: '单件产品名称', width:300, sort: true, fixed: 'left'}
+                    ,{field: '原27位码', title: '原27位码', width:250}
+                    ,{field: '原码状态', title: '原码状态', width:110, sort: true}
+                    ,{field: '型号', title: '型号', width:250}
+                    ,{field: '注册备案号', title: '注册备案号', width: 177}
+                    ,{field: '27位码', title: '现27位码', width: 250, sort: true}
+                    ,{field: '类型', title: '现码状态', width: 110, sort: true}
+                    ,{field: '耗材企业', title: '耗材企业', width: 250}
+                    ,{field: '规格', title: '规格', width: 200, sort: true}
+                           ]]
+                    });
+                   });
+                },error: function (err) {
+                  alert("查询错误");
+                }
+       })
